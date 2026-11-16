@@ -1,0 +1,362 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+#include <locale.h>
+#include <string.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
+/* ==================== ЗАДАНИЕ 1: ТОЧКИ ==================== */
+
+struct point {
+    float x;
+    float y;
+    char name;
+};
+
+typedef struct point Point;
+
+void put_point(Point z) {
+    printf("Точка %c (%.1f, %.1f)\n", z.name, z.x, z.y);
+}
+
+float dist(Point z, Point w) {
+    return sqrt((z.x - w.x)*(z.x - w.x) + (z.y - w.y)*(z.y - w.y));
+}
+
+Point mid(Point a, Point b) {
+    Point m;
+    m.x = (a.x + b.x) / 2.0f;
+    m.y = (a.y + b.y) / 2.0f;
+    m.name = 'M';
+    return m;
+}
+
+int sameQuadrant(Point a, Point b) {
+    if (a.x > 0 && a.y > 0 && b.x > 0 && b.y > 0) return 1;
+    if (a.x < 0 && a.y > 0 && b.x < 0 && b.y > 0) return 1;
+    if (a.x < 0 && a.y < 0 && b.x < 0 && b.y < 0) return 1;
+    if (a.x > 0 && a.y < 0 && b.x > 0 && b.y < 0) return 1;
+    return 0;
+}
+
+void task1_points(void) {
+    Point a, b, m;
+
+    printf("\n=== Задание 1. Работа с точками на плоскости ===\n\n");
+
+    printf("Введите имя первой точки (одна буква): ");
+    scanf(" %c", &a.name);
+    printf("Введите координаты точки %c (x y): ", a.name);
+    scanf("%f %f", &a.x, &a.y);
+
+    printf("Введите имя второй точки (одна буква): ");
+    scanf(" %c", &b.name);
+    printf("Введите координаты точки %c (x y): ", b.name);
+    scanf("%f %f", &b.x, &b.y);
+
+    printf("\n--- Результаты ---\n");
+    put_point(a);
+    put_point(b);
+
+    printf("Расстояние между точками: %.2f\n", dist(a, b));
+
+    m = mid(a, b);
+    printf("Средняя точка:\n");
+    put_point(m);
+
+    if (sameQuadrant(a, b))
+        printf("Точки %c и %c лежат в одной четверти\n", a.name, b.name);
+    else
+        printf("Точки %c и %c лежат в разных четвертях\n", a.name, b.name);
+}
+
+/* ==================== ЗАДАНИЕ 2: ВРЕМЯ ==================== */
+
+void center_print(const char *msg) {
+    char line[81];
+    int len = (int)strlen(msg);
+    int pad = (80 - len) / 2;
+    int i;
+
+    /* левая часть звёздочек */
+    for (i = 0; i < pad; i++) line[i] = '*';
+    /* текст */
+    for (i = 0; i < len; i++) line[pad + i] = msg[i];
+    /* правая часть */
+    for (i = pad + len; i < 80; i++) line[i] = '*';
+    line[80] = '\0';
+
+    printf("%s\n", line);
+}
+
+void get_day_name(int wday, char *buf) {
+    switch (wday) {
+        case 0: sprintf(buf, "воскресенье"); break;
+        case 1: sprintf(buf, "понедельник"); break;
+        case 2: sprintf(buf, "вторник"); break;
+        case 3: sprintf(buf, "среда"); break;
+        case 4: sprintf(buf, "четверг"); break;
+        case 5: sprintf(buf, "пятница"); break;
+        case 6: sprintf(buf, "суббота"); break;
+        default: sprintf(buf, "???"); break;
+    }
+}
+
+void get_month_name(int mon, char *buf) {
+    switch (mon) {
+        case 0: sprintf(buf, "января"); break;
+        case 1: sprintf(buf, "февраля"); break;
+        case 2: sprintf(buf, "марта"); break;
+        case 3: sprintf(buf, "апреля"); break;
+        case 4: sprintf(buf, "мая"); break;
+        case 5: sprintf(buf, "июня"); break;
+        case 6: sprintf(buf, "июля"); break;
+        case 7: sprintf(buf, "августа"); break;
+        case 8: sprintf(buf, "сентября"); break;
+        case 9: sprintf(buf, "октября"); break;
+        case 10: sprintf(buf, "ноября"); break;
+        case 11: sprintf(buf, "декабря"); break;
+        default: sprintf(buf, "???"); break;
+    }
+}
+
+void get_month_name_nom(int mon, char *buf) {
+    switch (mon) {
+        case 0: sprintf(buf, "январь"); break;
+        case 1: sprintf(buf, "февраль"); break;
+        case 2: sprintf(buf, "март"); break;
+        case 3: sprintf(buf, "апрель"); break;
+        case 4: sprintf(buf, "май"); break;
+        case 5: sprintf(buf, "июнь"); break;
+        case 6: sprintf(buf, "июль"); break;
+        case 7: sprintf(buf, "август"); break;
+        case 8: sprintf(buf, "сентябрь"); break;
+        case 9: sprintf(buf, "октябрь"); break;
+        case 10: sprintf(buf, "ноябрь"); break;
+        case 11: sprintf(buf, "декабрь"); break;
+        default: sprintf(buf, "???"); break;
+    }
+}
+
+void get_roman_month(int mon, char *buf) {
+    switch (mon) {
+        case 0: sprintf(buf, "I"); break;
+        case 1: sprintf(buf, "II"); break;
+        case 2: sprintf(buf, "III"); break;
+        case 3: sprintf(buf, "IV"); break;
+        case 4: sprintf(buf, "V"); break;
+        case 5: sprintf(buf, "VI"); break;
+        case 6: sprintf(buf, "VII"); break;
+        case 7: sprintf(buf, "VIII"); break;
+        case 8: sprintf(buf, "IX"); break;
+        case 9: sprintf(buf, "X"); break;
+        case 10: sprintf(buf, "XI"); break;
+        case 11: sprintf(buf, "XII"); break;
+        default: sprintf(buf, "?"); break;
+    }
+}
+
+int days_in_month(int mon, int year) {
+    if (mon == 1) { /* февраль */
+        if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0))
+            return 29;
+        return 28;
+    }
+    if (mon == 3 || mon == 5 || mon == 8 || mon == 10) return 30;
+    return 31;
+}
+
+void task2_time(void) {
+    time_t t;
+    struct tm *mytime;
+    char buf[120];
+    char dayname[20], monthname[20], monthnom[20], roman[10];
+    int year, mon, mday, hour, min, sec, wday, yday;
+    int days_to_sun, hours_to_sun;
+    int days_left_month, months_left_year;
+    int season_day;
+    int pair_start = 8 * 60;          /* первая пара в 8:00 */
+    int pair_len = 90;                /* длительность пары 90 мин */
+    int now_min, from_first, in_pair, rem_min, rem_sec;
+
+    t = time(NULL);
+    mytime = localtime(&t);
+
+    year = mytime->tm_year + 1900;
+    mon  = mytime->tm_mon;
+    mday = mytime->tm_mday;
+    hour = mytime->tm_hour;
+    min  = mytime->tm_min;
+    sec  = mytime->tm_sec;
+    wday = mytime->tm_wday;
+    yday = mytime->tm_yday;
+
+    get_day_name(wday, dayname);
+    get_month_name(mon, monthname);
+    get_month_name_nom(mon, monthnom);
+    get_roman_month(mon, roman);
+
+    printf("\n");
+    center_print("========================================");
+    center_print("          ЗАДАНИЕ 2. ТЕКУЩЕЕ ВРЕМЯ          ");
+    center_print("========================================");
+    printf("\n");
+
+    /* 1. Текущее время */
+    sprintf(buf, "Московское время %02d:%02d:%02d", hour, min, sec);
+    center_print(buf);
+
+    /* 2. День недели словами */
+    sprintf(buf, "Сегодня %s", dayname);
+    center_print(buf);
+
+    /* 3. День, месяц и год через разделитель */
+    sprintf(buf, "%02d.%02d.%d", mday, mon + 1, year);
+    center_print(buf);
+
+    /* 4. День (цифра) и месяц (слово) */
+    sprintf(buf, "%d %s", mday, monthname);
+    center_print(buf);
+
+    /* 5. сегодня N-й день k года */
+    sprintf(buf, "сегодня %d-й день %d года", yday + 1, year);
+    center_print(buf);
+
+    /* 6. до воскресенья k дней и m часов */
+    if (wday == 0) {
+        days_to_sun = 0;
+        hours_to_sun = 0;
+    } else {
+        days_to_sun = 7 - wday;
+        hours_to_sun = (24 - hour - 1);
+        if (min > 0 || sec > 0) hours_to_sun--;
+        if (hours_to_sun < 0) {
+            hours_to_sun += 24;
+            days_to_sun--;
+        }
+    }
+    sprintf(buf, "до воскресенья %d дней и %d часов", days_to_sun, hours_to_sun);
+    center_print(buf);
+
+    /* 7. с первой пары прошло k часов m минут (пара с 8:00) */
+    now_min = hour * 60 + min;
+    if (now_min >= pair_start) {
+        from_first = now_min - pair_start;
+        sprintf(buf, "с первой пары прошло %d часов %d минут", from_first / 60, from_first % 60);
+    } else {
+        sprintf(buf, "первая пара ещё не началась");
+    }
+    center_print(buf);
+
+    /* 8. до Нового года осталось m месяцев и k дней */
+    {
+        int days_left = 0;
+        int m;
+        for (m = mon + 1; m < 12; m++)
+            days_left += days_in_month(m, year);
+        days_left += days_in_month(mon, year) - mday;
+        months_left_year = 11 - mon;
+        sprintf(buf, "до Нового года осталось %d месяцев и %d дней", months_left_year, days_left % 31);
+    }
+    center_print(buf);
+
+    /* 9. до конца пары m минут и s секунд */
+    now_min = hour * 60 + min;
+    if (now_min >= pair_start) {
+        in_pair = (now_min - pair_start) % pair_len;
+        rem_min = pair_len - in_pair - 1;
+        rem_sec = 60 - sec;
+        if (rem_sec == 60) { rem_sec = 0; rem_min++; }
+        if (rem_min < 0) rem_min = 0;
+        sprintf(buf, "до конца пары %d минут и %d секунд", rem_min, rem_sec);
+    } else {
+        sprintf(buf, "сейчас не идёт пара");
+    }
+    center_print(buf);
+
+    /* 10. до конца месяца d дней, до конца года m месяцев */
+    days_left_month = days_in_month(mon, year) - mday;
+    months_left_year = 11 - mon;
+    sprintf(buf, "до конца месяца %d дней, до конца года %d месяцев", days_left_month, months_left_year);
+    center_print(buf);
+
+    /* 11. Месяц (римская цифра) и год */
+    sprintf(buf, "%s %d", roman, year);
+    center_print(buf);
+
+    /* 12. Время года и две последние цифры года */
+    {
+        const char *season;
+        if (mon == 11 || mon == 0 || mon == 1) season = "зима";
+        else if (mon >= 2 && mon <= 4) season = "весна";
+        else if (mon >= 5 && mon <= 7) season = "лето";
+        else season = "осень";
+        sprintf(buf, "%s %02d", season, year % 100);
+        center_print(buf);
+    }
+
+    /* 13. идёт k день зимы/осени */
+    if (mon == 11 || mon == 0 || mon == 1) {
+        if (mon == 11) season_day = mday;
+        else if (mon == 0) season_day = 31 + mday;
+        else season_day = 31 + 31 + mday;
+        sprintf(buf, "идёт %d день зимы", season_day);
+    } else if (mon >= 8 && mon <= 10) {
+        if (mon == 8) season_day = mday;
+        else if (mon == 9) season_day = 30 + mday;
+        else season_day = 30 + 31 + mday;
+        sprintf(buf, "идёт %d день осени", season_day);
+    } else {
+        sprintf(buf, "сейчас не зима и не осень");
+    }
+    center_print(buf);
+
+    printf("\n");
+    center_print("****************************************");
+}
+
+/* ==================== ГЛАВНОЕ МЕНЮ ==================== */
+
+int main(void) {
+    int choice;
+
+    setlocale(LC_ALL, "Russian");
+#ifdef _WIN32
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
+#endif
+
+    do {
+        printf("\n");
+        printf("========================================\n");
+        printf("          ПРАКТИКУМ ПО СИ               \n");
+        printf("========================================\n");
+        printf("  1. Задание 1 - Точки на плоскости\n");
+        printf("  2. Задание 2 - Текущее время\n");
+        printf("  0. Выход\n");
+        printf("========================================\n");
+        printf("Выберите пункт меню: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                task1_points();
+                break;
+            case 2:
+                task2_time();
+                break;
+            case 0:
+                printf("\nПрограмма завершена.\n");
+                break;
+            default:
+                printf("\nНеверный выбор. Попробуйте снова.\n");
+        }
+    } while (choice != 0);
+
+    system("pause");
+    return 0;
+}
